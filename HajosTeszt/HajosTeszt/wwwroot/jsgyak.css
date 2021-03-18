@@ -1,0 +1,13 @@
+﻿body {
+    
+}
+
+.egymás_mellé{
+    display:flex;
+    flex-direction:row;
+}
+
+.doboz{
+    height:30px;
+    width:30px;
+}
