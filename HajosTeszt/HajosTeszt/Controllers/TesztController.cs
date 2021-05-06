@@ -32,6 +32,10 @@ namespace HajosTeszt.Controllers
                 ContentType = System.Net.Mime.MediaTypeNames.Text.Plain, //"text/plain"
                 Content = szoveg.ToUpper()
             };
+            return BadRequest("Nem jó a bemenő adat");
+        }
+       
+            
         }
     }
 }
