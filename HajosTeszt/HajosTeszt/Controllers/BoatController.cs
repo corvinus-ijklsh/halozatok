@@ -12,7 +12,7 @@ namespace HajosTeszt.Controllers
     [ApiController]
     public class BoatController : ControllerBase
     {
-        [HttpGet]
+        /*[HttpGet]
         [Route("questions/all")]
         public ActionResult M1()
         {
@@ -20,7 +20,7 @@ namespace HajosTeszt.Controllers
             var kérdések = from x in context.Questions select x.QuestionText;
 
             return new JsonResult(kérdések);
-        }
+        }*/
 
         [HttpGet]
         [Route("questions/{sorszám}")]

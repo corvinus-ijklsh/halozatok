@@ -1,23 +1,24 @@
-﻿var hotList = [];
-var questionsInHotList = 3;
-var displayedQuestion;
-var numberOfQuestions;
-var nextQuestion = 853;
+﻿var hotList = []; //az éppen gyakoroltatott kérdések listája
+var questionsInHotList = 3; //ez majd 7 lesz, teszhetz jó a 3
+var displayedQuestion; //a hotlistből éppen ez a kérdés van kint
+var numberOfQuestions; //kérdések száma a teljes adatbázisban
+var nextQuestion = 853; //a következő kérdés száma a teljes listában
 var timeoutHandler;
 
 window.onload = function () {
-    init();
+    init;
     utolsóKérdés();
 }
 
 function kérdésBetöltés(questionNumber, destination) {
     fetch(`/questions/${questionNumber}`)
-        .then(response => {
-            if (!response.ok) {
-                console.error(`Hibás válasz: ${response.status}`)
+        .then(result => {
+            if (!result.ok) {
+                console.error(`Hibás válasz: ${result.status}`)
+                return null;
             }
             else {
-                return response.json()
+                return result.json()
             }
 
         }
@@ -48,6 +49,11 @@ function init() {
         kérdésBetöltés(nextQuestion, i);
         nextQuestion++;
     }
+
+    //Kérdések számát megadó API végpont
+    fetch("questions/count")
+        .then(result => { return result.text() })
+        .then(n => { numberOfQuestions = parseInt(n) })
 }
 
 function kérdésMegjelenítés() {
@@ -57,9 +63,26 @@ function kérdésMegjelenítés() {
     document.getElementById("válasz1").innerText = kérdés.answer1;
     document.getElementById("válasz2").innerText = kérdés.answer2;
     document.getElementById("válasz3").innerText = kérdés.answer3;
-    document.getElementById("kép").innerHTML = `<img id="kép1" src="https://szoft1.comeback.hu/hajo/${kérdés.image}">`;
+    
+
+    if (kérdés.image) {
+        document.getElementById("kép").src = kérdés.image;
+        document.getElementById("kép").style.display = "block";
+    }
+    else {
+        document.getElementById("kép").style.display = "none";
+    }
+
+    for (var i = 1; i <= 3; i++) {
+        document.getElementById("válasz" + i).classList.remove("jó", "rossz")
+        document.getElementById(`válaszok`).style.pointerEvents = "auto";
+    }
     helyesVálasz = kérdés.correctAnswer;
 }
+
+//Előre-hátra gombok
+document.getElementById("előre_gomb").addEventListener("click", Előre);
+document.getElementById("vissza_gomb").addEventListener("click", Vissza);
 
 function Vissza() {
     displayedQuestion--;
@@ -82,6 +105,27 @@ function Előre() {
     színezésOff();
 }
 
+function Választás(n) {
+    let kérdés = hotList[displayedQuestion].question;
+    if (n === kérdés.correctAnswer) {
+        document.getElementById("válasz" + n).classList.add("jó")
+        hotList[displayedQuestion].goodAnswers++;
+        if (hotList[displayedQuestion].goodAnswers === 3) {
+            kérdésBetöltés(nextQuestion, displayedQuestion);
+            nextQuestion++;
+            //to do: kérdéslista vége ellenőrzés
+
+        }
+    }
+    else {
+        document.getElementById("válasz" + n).classList.add("rossz")
+        document.getElementById("válasz" + kérdés.correctAnswer).classList.add("jó")
+        hotList[displayedQuestion].goodAnswers =0;
+    }
+    document.getElementById(`válaszok`).style.pointerEvents = "none";
+    timeoutHandler = setTimeout(Előre, 3000);
+}
+
 function színezésOff() {
     for (var i = 1; i <= 3; i++) {
         document.getElementById(`válasz${i}`).style.backgroundColor = "antiquewhite";
@@ -90,7 +134,7 @@ function színezésOff() {
 
 function KattintásLetiltás() {
     for (var i = 1; i <= 3; i++) {
-        document.getElementById(`válasz${i}`).style.pointerEvents = "none";
+        document.getElementById(`válaszok`).style.pointerEvents = "none";
     }
 }
 
@@ -102,7 +146,7 @@ function KattintásFeloldás() {
 
 
 
-function Válasz1() {
+/*function Válasz1() {
     document.getElementById("válasz1").style.backgroundColor = "red";
     document.getElementById(`válasz${helyesVálasz}`).style.backgroundColor = "green";
 
@@ -153,5 +197,5 @@ function Válasz3() {
         hotList[displayedQuestion].goodAnswers = 0;
     }
     KattintásLetiltás();
-    timeoutHandler = setTimeout(Előre, 3000);
+    timeoutHandler = setTimeout(Előre, 3000);*/
 } 
