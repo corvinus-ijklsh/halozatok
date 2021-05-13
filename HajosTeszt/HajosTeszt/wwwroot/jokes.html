@@ -11,14 +11,25 @@
             <input id="jokeText" type="text" placeholder="Csak PC vicc" />
         </div>
         <button id="addButton">Új vicc felvétele</button>
+        <div id="show"></div>
     </form>
     <script>
+        document.addEventListener("DOMContentLoaded", x => {
+
+            fetch("api/jokes").then(x => x.json()).then(x => { showJokes(x) })
+
+        })
+
+
+
+
         document.getElementById("addButton").addEventListener("click", () => {
 
             //Ezt az objektumot fogjuk átküldeni
             let data = {
                 jokeText: document.getElementById("jokeText").value
             }
+
 
 
             fetch("api/jokes",
@@ -28,6 +39,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
+
                 }
             ).then(x => {
                 if (x.ok) {
@@ -36,9 +48,20 @@
                 }
                 else {
                     alert("Kudarc");
-                });
+                };
 
+            })
         });
+
+            function showJokes(j) {
+                console.log(j)
+                for (var i = 0; i < j.length; i++) {
+                    console.log(j[i].jokeText)
+                    let vicc = document.createElement("div");
+                    vicc.innerHTML = j[i].jokeText;
+                    document.getElementById("show").appendChild(vicc);
+                }
+            }
 
 
     </script>

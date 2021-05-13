@@ -21,18 +21,21 @@ namespace HajosTeszt.Controllers
             return context.Jokes.ToList();
         }
 
-        // GET api/<JokeController>/5
+        // GET api/jokes/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<JokeController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST api/jokes
+        //[HttpPost]
+        /*public void Post([FromBody] Joke newjoke)
         {
-        }
+            FunnyDatabaseContext context = new FunnyDatabaseContext();
+            context.Jokes.Add(newjoke);
+            context.SaveChanges();
+        }*/
 
         // PUT api/<JokeController>/5
         [HttpPut("{id}")]
